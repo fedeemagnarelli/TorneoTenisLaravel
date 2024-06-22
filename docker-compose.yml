@@ -1,0 +1,45 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: torneo.tenis.laravel
+    container_name: Torneo-Tenis-Laravel
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=TorneoTenis
+      - SERVICE_TAGS=dev
+    working_dir: /var/www/html
+    networks:
+      - TorneoTenis-network
+
+  mysql:
+    image: mysql:latest
+    container_name: Torneo-Tenis-SQL
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=torneo_tenis
+      - MYSQL_PASSWORD=root_password
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_ALLOW_EMPTY_PASSWORD
+      - MYSQL_RANDOM_ROOT_PASSWORD
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - TorneoTenis-network
+
+networks:
+  TorneoTenis-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
